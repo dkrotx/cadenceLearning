@@ -2,7 +2,7 @@
 My studying of cadence workflow engine. 
 
 - Follow instructions on https://cadenceworkflow.io/ 
-- Spin up docker compose. 
+- Spin up docker compose: `docker-compose up -d`
 - UI: http://localhost:8088/ 
 - Create a new domain, I'll use "test-domain" in following examples.
 
