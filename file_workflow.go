@@ -42,8 +42,15 @@ func transformImageWorkflow(ctx workflow.Context, args FileOperationArgs) error 
 	}
 	defer workflow.CompleteSession(sessionCtx)
 
-	workflow.ExecuteActivity(sessionCtx, downloadImage, args.URL, args.OutputPath).Get(sessionCtx, nil)
-	workflow.ExecuteActivity(sessionCtx, transformImage, args.OutputPath).Get(sessionCtx, nil)
+	future := workflow.ExecuteActivity(sessionCtx, downloadImage, args.URL, args.OutputPath)
+	if err := future.Get(sessionCtx, nil); err != nil {
+		return err
+	}
+
+	future = workflow.ExecuteActivity(sessionCtx, transformImage, args.OutputPath)
+	if err = future.Get(sessionCtx, nil); err != nil {
+		return err
+	}
 
 	return nil
 }
