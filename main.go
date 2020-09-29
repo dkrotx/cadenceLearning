@@ -59,8 +59,8 @@ func startWorker(logger *zap.Logger, service workflowserviceclient.Interface) {
 	// TaskListName identifies set of client workflows, activities, and workers.
 	// It could be your group or client or application name.
 	workerOptions := worker.Options{
-		Logger:       logger,
-		MetricsScope: tally.NewTestScope(TaskListName, map[string]string{}),
+		Logger:              logger,
+		MetricsScope:        tally.NewTestScope(TaskListName, map[string]string{}),
 		EnableSessionWorker: true, // required for sessions, see file_workflow.go
 	}
 

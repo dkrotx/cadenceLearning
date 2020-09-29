@@ -9,7 +9,7 @@ import (
 
 type UserInformation struct {
 	FirstName string
-	Age int
+	Age       int
 	Confirmed bool
 }
 
@@ -39,12 +39,12 @@ func FindUserInDatabase(name string) (UserInformation, error) {
 
 	return UserInformation{
 		FirstName: name,
-		Age: age,
+		Age:       age,
 	}, nil
 }
 
 func AllowedToDriveCar(uinfo UserInformation) (bool, error) {
-	if rand.Int() % 5 == 0 {
+	if rand.Int()%5 == 0 {
 		fmt.Println("passing AllowedToDriveCar")
 		return uinfo.Age >= 18, nil
 	}

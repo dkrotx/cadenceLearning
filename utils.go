@@ -1,7 +1,6 @@
 package main
 
 import (
-	"image/color"
 	"io"
 	"net/http"
 	"os"
@@ -34,7 +33,7 @@ func imageUpsideDown(filepath string) error {
 	}
 
 	// img, degrees, set a color to the background
-	img = imaging.Rotate(img, 180, color.RGBA{0, 0, 0, 1})
+	img = imaging.Rotate180(img)
 	err = imaging.Save(img, filepath)
 	if err != nil {
 		return errors.Wrap(err, "failed to save image")

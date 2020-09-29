@@ -14,7 +14,7 @@ func registerImageOperationWorkflow(worker worker.Worker) {
 }
 
 type FileOperationArgs struct {
-	URL string	`json:"url"`
+	URL        string `json:"url"`
 	OutputPath string `json:"output_path"`
 }
 

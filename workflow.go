@@ -10,10 +10,10 @@ import (
 
 func defaultActivityOptions() workflow.ActivityOptions {
 	retryPolicy := &cadence.RetryPolicy{
-		InitialInterval:    time.Second,
-		BackoffCoefficient: 2,
-		MaximumInterval:    10 * time.Second,
-		ExpirationInterval: time.Minute * 5,
+		InitialInterval:          time.Second,
+		BackoffCoefficient:       2,
+		MaximumInterval:          10 * time.Second,
+		ExpirationInterval:       time.Minute * 5,
 		NonRetriableErrorReasons: []string{"stop-retry"},
 	}
 
@@ -24,7 +24,7 @@ func defaultActivityOptions() workflow.ActivityOptions {
 		StartToCloseTimeout:    time.Second * 5,
 		HeartbeatTimeout:       time.Second * 5,
 		WaitForCancellation:    false,
-		RetryPolicy: retryPolicy,
+		RetryPolicy:            retryPolicy,
 	}
 }
 
@@ -101,7 +101,7 @@ func CheckDrivingLicenceWorkflow(ctx workflow.Context, driverName string) error 
 	}
 
 	logger.Info("Stop signal isn't received, running again")
-	workflow.Sleep(ctx, time.Second)  // prevent burning CPU
+	workflow.Sleep(ctx, time.Second) // prevent burning CPU
 	return workflow.NewContinueAsNewError(ctx, CheckDrivingLicenceWorkflow, driverName)
 }
 
