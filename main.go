@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
+
 	"github.com/uber-go/tally"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 	"go.uber.org/cadence/worker"
@@ -18,6 +22,11 @@ var ClientName = "cadence-learning"
 var CadenceService = "cadence-frontend"
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
+	worker.SetStickyWorkflowCacheSize(1_000_000)
 	startWorker(buildLogger(), buildCadenceClient())
 
 	fmt.Println("Starting infinite loop. Press ^C to quit")
@@ -72,7 +81,7 @@ func startWorker(logger *zap.Logger, service workflowserviceclient.Interface) {
 
 	registerWorkflows(worker)
 	registerActivities(worker)
-	registerImageOperationWorkflow(worker)
+	registerImageOperationWorkflow(worker, logger)
 
 	err := worker.Start()
 	if err != nil {

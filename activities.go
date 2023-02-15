@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/worker"
-	"math/rand"
 )
 
 type UserInformation struct {

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/worker"
 	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
-	"time"
 )
 
 func defaultActivityOptions() workflow.ActivityOptions {
@@ -79,6 +81,14 @@ func SimpleWorkflowEx(ctx workflow.Context, value string) error {
 func CheckDrivingLicenceWorkflow(ctx workflow.Context, driverName string) error {
 	ctx = workflow.WithActivityOptions(ctx, defaultActivityOptions())
 	logger := workflow.GetLogger(ctx)
+	fmt.Println("==== CheckDrivingLicenceWorkflow")
+
+	err := workflow.SetQueryHandler(ctx, "get_driver_name", func() (string, error) {
+		return driverName, nil
+	})
+	if err != nil {
+		return err
+	}
 
 	future := workflow.ExecuteActivity(ctx, FindUserInDatabase, driverName)
 	var userInfo UserInformation
@@ -86,7 +96,7 @@ func CheckDrivingLicenceWorkflow(ctx workflow.Context, driverName string) error 
 		return err
 	}
 
-	//userInfo.Confirmed = confirmAge(ctx)
+	userInfo.Confirmed = confirmAge(ctx)
 	future = workflow.ExecuteActivity(ctx, AllowedToDriveCar, userInfo)
 	var result bool
 	if err := future.Get(ctx, &result); err != nil {
@@ -101,7 +111,7 @@ func CheckDrivingLicenceWorkflow(ctx workflow.Context, driverName string) error 
 	}
 
 	logger.Info("Stop signal isn't received, running again")
-	workflow.Sleep(ctx, time.Second) // prevent burning CPU
+	workflow.Sleep(ctx, 10*time.Second) // prevent burning CPU
 	return workflow.NewContinueAsNewError(ctx, CheckDrivingLicenceWorkflow, driverName)
 }
 

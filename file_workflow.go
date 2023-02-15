@@ -2,16 +2,25 @@ package main
 
 import (
 	"errors"
+	"go.uber.org/cadence/activity"
 	"go.uber.org/cadence/worker"
 	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"time"
 )
 
-func registerImageOperationWorkflow(worker worker.Worker) {
+var downloadImageActivity = "downloadImage"
+
+func registerImageOperationWorkflow(worker worker.Worker, logger *zap.Logger) {
 	worker.RegisterWorkflowWithOptions(transformImageWorkflow, workflow.RegisterOptions{Name: "FlipImage"})
 	worker.RegisterWorkflow(transformImageSubWorkflow)
-	worker.RegisterActivity(downloadImage)
+
+	// activity with receiver just for demo
+	webclient := &webclient{logger}
+	worker.RegisterActivityWithOptions(webclient.downloadImage, activity.RegisterOptions{
+		Name: downloadImageActivity,
+	})
+
 	worker.RegisterActivity(transformImage)
 }
 
@@ -37,7 +46,7 @@ func transformImageSubWorkflow(ctx workflow.Context, url, outputPath string) err
 	}
 	defer workflow.CompleteSession(sessionCtx)
 
-	future := workflow.ExecuteActivity(sessionCtx, downloadImage, url, outputPath)
+	future := workflow.ExecuteActivity(sessionCtx, downloadImageActivity, url, outputPath)
 	if err := future.Get(sessionCtx, nil); err != nil {
 		return err
 	}
@@ -72,7 +81,12 @@ func transformImageWorkflow(ctx workflow.Context, args FileOperationArgs) error 
 	return future.Get(ctx, nil)
 }
 
-func downloadImage(url, filepath string) error {
+type webclient struct {
+	logger *zap.Logger
+}
+
+func (client *webclient) downloadImage(url, filepath string) error {
+	client.logger.Info("Downloading image", zap.String("URL", url))
 	return downloadFile(url, filepath)
 }
 
