@@ -15,7 +15,7 @@ It is handy to have a Bash script in directory which comes before system ones in
 $ cat ~/bin/cadence-local
 #!/bin/bash
 
-docker run --network=host ubercadence/cli "$@"
+docker run --network=host ubercadence/cli:master "$@"
 ```
 
 # Registering a new domain
@@ -56,4 +56,4 @@ Make sure you have following in your go.mod:
 replace go.uber.org/cadence => /Users/dkrot/go/src/go.uber.org/cadence
 ```
 
-Now you can play around and see your changes to client are immediately take effect. 
+Now you can play around and see your changes to client are immediately take effect.
