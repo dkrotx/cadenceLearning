@@ -47,3 +47,13 @@ $ cadence-local --domain test-domain workflow start --tasklist cadence-learning-
 $ cadence-local --domain test-domain workflow signal -w 5a907a10-e51c-430a-9a64-3cfe1a48e6a5 --name age-confirmation -i '"confirmed"'
 $ cadence-local --domain test-domain workflow signal -w bf3aaf6b-0d65-4b94-b1f7-84e1761d7e95 --name stop -i '"true"'
 ```
+
+## Local version of Cadence client
+
+Since we're about to work on cadence client, we need to replace github version with a local checkout.
+Make sure you have following in your go.mod:
+```
+replace go.uber.org/cadence => /Users/dkrot/go/src/go.uber.org/cadence
+```
+
+Now you can play around and see your changes to client are immediately take effect. 
